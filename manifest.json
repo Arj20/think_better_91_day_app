@@ -1,0 +1,17 @@
+{
+  "name": "Think Better \u2014 91 Day Thinking Gym",
+  "short_name": "Think Better",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#111827",
+  "description": "Mental models, daily practice and 91-day personal operating system.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

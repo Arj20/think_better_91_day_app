@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="description" content="A personal thinking gym: mental models, 91-day practice and reflection.">
+<link rel="manifest" href="manifest.json">
+<title>Think Better — 91 Day Thinking Gym</title>
+<style>
+:root{
+  --bg:#f6f7fb;--surface:#fff;--surface2:#eef1f7;--text:#111827;--muted:#687386;
+  --line:#dde2ea;--accent:#635bff;--accent2:#8b7cff;--success:#16845a;--danger:#c94b57;
+  --shadow:0 14px 36px rgba(17,24,39,.09);--radius:22px;
+}
+[data-theme="dark"]{
+  --bg:#0b1020;--surface:#121a2b;--surface2:#1b263c;--text:#eef2ff;--muted:#aab4c7;
+  --line:#29354b;--shadow:0 18px 42px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}
+button,input,textarea{font:inherit}
+button{border:0}
+.app{max-width:760px;margin:0 auto;padding-bottom:88px}
+header{
+  position:sticky;top:0;z-index:30;padding:14px 16px 12px;
+  background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)
+}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:800;letter-spacing:-.03em;font-size:20px}
+.brand span{color:var(--accent)}
+.icon-btn{width:40px;height:40px;border-radius:13px;background:var(--surface);color:var(--text);border:1px solid var(--line);cursor:pointer}
+main{padding:18px 16px}
+.view{display:none}.view.active{display:block}
+.hero{
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
+  border:1px solid var(--line);box-shadow:var(--shadow);border-radius:28px;padding:22px;
+}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--accent);font-weight:800}
+h1,h2,h3,p{margin:0}
+h1{margin-top:6px;font-size:32px;line-height:1.06;letter-spacing:-.04em}
+h2{font-size:22px;letter-spacing:-.03em}
+h3{font-size:18px}
+.sub{margin-top:10px;color:var(--muted);line-height:1.55}
+.quote{
+  margin-top:18px;padding:14px 16px;border-radius:18px;background:var(--surface);
+  border:1px solid var(--line);font-weight:700;line-height:1.4
+}
+.grid{display:grid;gap:12px}
+.grid.two{grid-template-columns:1fr 1fr}
+.stat{padding:16px;border:1px solid var(--line);background:var(--surface);border-radius:18px}
+.stat .label{font-size:12px;color:var(--muted)}
+.stat .value{font-size:26px;font-weight:800;margin-top:5px}
+.section{margin-top:18px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.progress{
+  height:9px;background:var(--surface2);border-radius:99px;overflow:hidden;border:1px solid var(--line)
+}
+.progress > div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:20px
+}
+.model-card{min-height:300px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+.model-card .model-name{font-size:30px;font-weight:850;letter-spacing:-.04em;margin-top:8px}
+.model-card .model-one{font-size:19px;line-height:1.45;margin-top:14px}
+.model-card .back{display:none}
+.model-card.flipped .front{display:none}
+.model-card.flipped .back{display:block}
+.kicker{font-size:13px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);font-size:12px;font-weight:700}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.actions{display:flex;gap:10px;margin-top:14px}
+.btn{
+  flex:1;padding:13px 15px;border-radius:15px;background:var(--text);color:var(--bg);font-weight:800;cursor:pointer
+}
+.btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--line)}
+.btn.accent{background:var(--accent);color:white}
+.btn.small{flex:0;padding:9px 12px;border-radius:12px;font-size:13px}
+.search{
+  width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);outline:none
+}
+.search:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,91,255,.12)}
+.filter{display:flex;gap:8px;overflow:auto;padding:2px 0 6px}
+.filter button{white-space:nowrap}
+.model-list{display:grid;gap:10px}
+.mini-card{padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--surface);cursor:pointer}
+.mini-card strong{display:block;font-size:16px}
+.mini-card p{margin-top:6px;color:var(--muted);line-height:1.45;font-size:14px}
+.fav{float:right;color:var(--muted)}.fav.on{color:#e2a300}
+.day-card{padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
+.day-card.done{opacity:.62}
+.checkline{display:flex;gap:12px;align-items:flex-start}
+.checkline input{margin-top:4px;width:20px;height:20px;accent-color:var(--accent)}
+.daynum{font-size:12px;color:var(--accent);font-weight:800}
+.note{font-size:13px;color:var(--muted);line-height:1.5}
+textarea{
+  width:100%;min-height:120px;resize:vertical;padding:14px 16px;border-radius:16px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);outline:none
+}
+.footer-note{text-align:center;color:var(--muted);font-size:12px;padding:20px 0 10px}
+nav{
+  position:fixed;z-index:40;left:50%;bottom:12px;transform:translateX(-50%);
+  width:min(720px,calc(100vw - 20px));padding:8px;display:grid;grid-template-columns:repeat(4,1fr);
+  gap:6px;border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 92%,transparent);
+  backdrop-filter:blur(18px);border-radius:20px;box-shadow:var(--shadow)
+}
+nav button{background:transparent;color:var(--muted);padding:10px 6px;border-radius:14px;font-size:12px;font-weight:800;cursor:pointer}
+nav button.active{background:var(--surface2);color:var(--text)}
+.small-label{font-size:12px;color:var(--muted)}
+.divider{height:1px;background:var(--line);margin:16px 0}
+details{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:0 15px}
+details+details{margin-top:10px}
+summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:800}
+summary::-webkit-details-marker{display:none}
+details .inside{padding:0 0 15px}
+.review-grid{display:grid;gap:12px}
+.toast{
+  position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--text);color:var(--bg);
+  padding:11px 15px;border-radius:999px;font-size:13px;font-weight:800;opacity:0;pointer-events:none;transition:.25s;z-index:60
+}
+.toast.show{opacity:1}
+@media (min-width:700px){
+  main{padding:26px 20px}
+  .grid.three{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="topbar">
+    <div class="brand">Think <span>Better</span></div>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☾</button>
+  </div>
+</header>
+
+<main>
+  <section id="today" class="view active">
+    <div class="hero">
+      <div class="eyebrow">Daily thinking gym</div>
+      <h1>Become harder to fool — especially by yourself.</h1>
+      <p class="sub">Train attention, judgment, learning, courage and execution in small daily reps. You are not trying to become a different species. You are building better defaults.</p>
+      <div class="quote" id="positiveLine"></div>
+    </div>
+
+    <div class="section grid two">
+      <div class="stat"><div class="label">91-day progress</div><div class="value" id="progressPct">0%</div></div>
+      <div class="stat"><div class="label">Current streak</div><div class="value" id="streakValue">0</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>Today’s model</h2><button class="btn small secondary" id="shuffleBtn">Shuffle</button></div>
+      <div class="model-card card" id="dailyModel">
+        <div class="front">
+          <div class="row"><span class="pill" id="dailyTag">Thinking</span><span class="kicker">Tap the card to flip</span></div>
+          <div class="model-name" id="dailyName"></div>
+          <div class="model-one" id="dailyOne"></div>
+        </div>
+        <div class="back">
+          <div class="row"><span class="pill" id="backTag">Thinking</span></div>
+          <h3 id="backThink" style="margin-top:16px"></h3>
+          <div class="divider"></div>
+          <div class="small-label">REAL USE</div>
+          <p class="sub" id="backExample"></p>
+          <div class="divider"></div>
+          <div class="small-label">ASK YOURSELF</div>
+          <p class="sub" id="backQuestion"></p>
+        </div>
+        <div class="actions">
+          <button class="btn accent" id="modelDoneBtn">Mark reviewed</button>
+          <button class="btn secondary" id="favDailyBtn">☆ Favorite</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>Today’s 5 reps</h2><span class="small-label" id="todayCount">0 / 5</span></div>
+      <div class="grid" id="todayReps"></div>
+    </div>
+  </section>
+
+  <section id="models" class="view">
+    <div class="section-head"><h2>Mental models</h2><span class="small-label" id="modelCount"></span></div>
+    <input class="search" id="modelSearch" placeholder="Search: inversion, bottleneck, incentives...">
+    <div class="filter" id="filters"></div>
+    <div class="model-list" id="modelList"></div>
+  </section>
+
+  <section id="plan" class="view">
+    <div class="hero">
+      <div class="eyebrow">91-day protocol</div>
+      <h1>Train the machine you already have.</h1>
+      <p class="sub">One meaningful rep per day. The target is not heroic intensity; it is repeated evidence that you can think, act, recover and improve.</p>
+      <div class="section">
+        <div class="section-head"><span class="small-label">Overall</span><strong id="planProgressText">0 / 91</strong></div>
+        <div class="progress"><div id="planProgressBar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="section" id="planWeeks"></div>
+  </section>
+
+  <section id="review" class="view">
+    <div class="hero">
+      <div class="eyebrow">Reflection</div>
+      <h1>Turn experience into learning.</h1>
+      <p class="sub">Self-judgment is cheap. Evidence is useful. Use these prompts to turn days into data.</p>
+    </div>
+    <div class="section review-grid">
+      <div class="card">
+        <h3>Daily review</h3>
+        <p class="note" style="margin:8px 0 12px">Three lines. Keep it factual.</p>
+        <textarea id="wins" placeholder="What did I do well?"></textarea>
+        <textarea id="failure" style="margin-top:10px" placeholder="Where did I fall short?"></textarea>
+        <textarea id="tomorrow" style="margin-top:10px" placeholder="What specific change will I make tomorrow?"></textarea>
+        <button class="btn accent" id="saveReview" style="margin-top:12px">Save today’s review</button>
+      </div>
+      <div class="card">
+        <h3>Decision journal</h3>
+        <p class="note" style="margin:8px 0 12px">Train judgment by making predictions you can later check.</p>
+        <textarea id="decision" placeholder="Decision / prediction"></textarea>
+        <textarea id="probability" style="margin-top:10px" placeholder="Confidence (e.g. 70%) + why"></textarea>
+        <textarea id="evidence" style="margin-top:10px" placeholder="What evidence would change my mind?"></textarea>
+        <button class="btn secondary" id="saveDecision" style="margin-top:12px">Save decision note</button>
+      </div>
+      <div class="card">
+        <h3>My operating principles</h3>
+        <p class="note" style="margin:8px 0 12px">Write principles you want to become automatic.</p>
+        <textarea id="principles" placeholder="e.g. Tell the truth early. Fix the bottleneck. Do hard things before they become emergencies."></textarea>
+        <button class="btn secondary" id="savePrinciples" style="margin-top:12px">Save principles</button>
+      </div>
+    </div>
+    <div class="quote" id="reviewQuote"></div>
+  </section>
+
+  <div class="footer-note">Built for repetition, not perfection. Your future self is mostly a stack of small decisions.</div>
+</main>
+
+<nav>
+  <button data-view="today" class="active">Today</button>
+  <button data-view="models">Models</button>
+  <button data-view="plan">91 Days</button>
+  <button data-view="review">Review</button>
+</nav>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+
+
+const MODELS = [{"name": "First Principles", "tag": "Thinking", "one": "Break a problem into fundamental facts instead of inheriting assumptions.", "think": "What must be true? What are the actual constraints?", "example": "Career: compensation comes from value, scarcity, leverage, evidence and negotiation — not just “being better at React.”", "question": "What would I design if I ignored how this is usually done?"}, {"name": "Opportunity Cost", "tag": "Decisions", "one": "The real cost of a choice is the best alternative you give up.", "think": "What am I saying no to by saying yes to this?", "example": "Three hours of scrolling is also three hours you could have spent on system design, exercise or relationships.", "question": "Is this the best use of this hour?"}, {"name": "Inversion", "tag": "Thinking", "one": "Instead of only asking how to win, ask how to guarantee failure.", "think": "What would make this fail? Which of those can I prevent?", "example": "Bad career: avoid hard problems, avoid feedback, stay invisible. Reverse each behavior.", "question": "How could I accidentally sabotage this?"}, {"name": "Second-Order Thinking", "tag": "Decisions", "one": "Look past the immediate effect to what happens next, and then after that.", "think": "And then what?", "example": "Caching makes an API faster, but introduces staleness, invalidation and support problems.", "question": "What are the second- and third-order effects?"}, {"name": "Compounding", "tag": "Growth", "one": "Small repeated gains become large over time.", "think": "What tiny improvement can I repeat for years?", "example": "60 focused minutes a day becomes hundreds of hours of real skill-building each year.", "question": "What would become enormous if I kept doing it?"}, {"name": "Diminishing Returns", "tag": "Priorities", "one": "The first units often create huge gains; later units create smaller gains.", "think": "Where is my next hour worth the most?", "example": "Going from weak to solid at system design may be worth more than polishing an already-strong React skill.", "question": "Am I polishing a strength while a bigger gap remains?"}, {"name": "Pareto Principle", "tag": "Priorities", "one": "A minority of inputs often creates a majority of the output.", "think": "Which few things dominate the result?", "example": "A few habits may dominate productivity: sleep, phone control and uninterrupted work.", "question": "What are the vital few?"}, {"name": "Feedback Loops", "tag": "Behavior", "one": "Your actions create results that shape the next actions.", "think": "What loop am I reinforcing?", "example": "Avoid DSA → remain weak → feel bad → avoid DSA. Replace it with easy wins → harder problems → feedback → confidence.", "question": "Is this loop making me stronger or weaker?"}, {"name": "Bottleneck", "tag": "Execution", "one": "Improve the constraint that is limiting the whole system.", "think": "What is the narrowest part of the pipeline?", "example": "Technical skill can be strong while communication becomes the promotion bottleneck.", "question": "What single constraint is holding the system back?"}, {"name": "Marginal Gains", "tag": "Growth", "one": "Optimize the next increment instead of demanding a total transformation.", "think": "What is the next 10% improvement?", "example": "30 minutes of deep work → 45 → 60 → 90 instead of declaring you will suddenly study six hours daily.", "question": "What is the smallest meaningful improvement?"}, {"name": "Probabilistic Thinking", "tag": "Decisions", "one": "Most real-world outcomes are probabilities, not certainties.", "think": "What probability do I assign to this?", "example": "Instead of “I will get the job,” think “this preparation may raise my odds from 10% to 25%.”", "question": "How confident am I, and why?"}, {"name": "Bayesian Updating", "tag": "Thinking", "one": "Change your belief when new evidence arrives.", "think": "What did I believe before, and what does the evidence now say?", "example": "Ten presentations that go well should update “I’m terrible at speaking” into a more accurate belief.", "question": "What evidence would make me change my mind?"}, {"name": "Map ≠ Territory", "tag": "Thinking", "one": "Your interpretation of reality is not reality itself.", "think": "What did I observe, and what story did I add?", "example": "“My manager dislikes me” is an interpretation; “he interrupted twice” is an observation.", "question": "What do I actually know?"}, {"name": "Chesterton’s Fence", "tag": "Engineering", "one": "Before removing a strange rule, understand why it exists.", "think": "What problem was this solving?", "example": "A weird condition in old code may protect a compliance case or a past production failure.", "question": "What history am I missing?"}, {"name": "Goodhart’s Law", "tag": "Metrics", "one": "When a measure becomes the target, it can stop being a useful measure.", "think": "Can people game this metric?", "example": "20 PRs/month can create noisy trivial PRs instead of better software.", "question": "What behavior will this metric accidentally reward?"}, {"name": "Incentives", "tag": "People", "one": "Behavior often makes more sense when you understand the rewards behind it.", "think": "What is this person/system rewarded for?", "example": "Salespeople rewarded only for bookings may push low-quality deals that later churn.", "question": "What incentive would make this behavior rational?"}, {"name": "Principal-Agent Problem", "tag": "People", "one": "The decision-maker may not bear the consequences of the decision.", "think": "Who gets the upside, and who absorbs the downside?", "example": "A manager may gain a bonus from aggressive targets while the team absorbs burnout.", "question": "Are incentives aligned?"}, {"name": "Survivorship Bias", "tag": "Thinking", "one": "You see the winners more easily than the failures that disappeared.", "think": "Where are the missing examples?", "example": "A billionaire’s five habits are not proof that everyone who followed them became rich.", "question": "What does the invisible denominator look like?"}, {"name": "Selection Bias", "tag": "Thinking", "one": "The people or examples you observe may not represent the full population.", "think": "Who am I not seeing?", "example": "LinkedIn overrepresents people announcing promotions and success.", "question": "Is my sample representative?"}, {"name": "Regression to the Mean", "tag": "Statistics", "one": "Extreme performances often move closer to average on later attempts.", "think": "How much of this result was skill, and how much was variance?", "example": "A brilliant quarter followed by an average quarter does not prove you suddenly became worse.", "question": "Am I overreacting to one datapoint?"}, {"name": "Hanlon’s Razor", "tag": "People", "one": "Do not jump to malice when error, overload or misunderstanding explains the result.", "think": "Is there a simpler non-malicious explanation?", "example": "A delayed reply may be busyness, forgetfulness or poor organization — not disrespect.", "question": "What benign explanation also fits?"}, {"name": "Circle of Competence", "tag": "Learning", "one": "Know what you understand deeply and where the edges of your knowledge are.", "think": "What do I actually know versus recognize?", "example": "“I can use Postgres” is different from “I understand MVCC internals deeply.”", "question": "Where is the edge of my competence?"}, {"name": "Margin of Safety", "tag": "Risk", "one": "Design for error, uncertainty and bad conditions rather than perfection.", "think": "What happens if I am wrong?", "example": "Financially: emergency savings. In systems: retries, timeouts, fallbacks and observability.", "question": "Where do I need buffer?"}, {"name": "Antifragility", "tag": "Growth", "one": "Some systems improve through manageable stress and variation.", "think": "What useful stress would make me stronger?", "example": "Progressive overload strengthens the body; increasingly hard projects strengthen capability.", "question": "What challenge is just beyond my current level?"}, {"name": "Leverage", "tag": "Strategy", "one": "Some actions create disproportionate output.", "think": "How can one unit of effort affect many units of outcome?", "example": "Code, media, capital, systems and strong teams all let effort scale.", "question": "Where is my highest leverage point?"}, {"name": "Deliberate Practice", "tag": "Learning", "one": "Practice the edge of your ability with feedback, not just repetition.", "think": "What specific sub-skill am I training, and how will I know I improved?", "example": "Don't “study system design”; design one system, get critique, revise it, then repeat.", "question": "What exact skill is this rep improving?"}, {"name": "Falsifiability", "tag": "Thinking", "one": "A useful belief should have evidence that could prove it wrong.", "think": "What result would make me reject this belief?", "example": "“I am bad at speaking” becomes testable if you define observable outcomes.", "question": "What would disprove my current story?"}, {"name": "Pre-mortem", "tag": "Execution", "one": "Imagine the project failed, then work backward to identify why.", "think": "It is six months later and this failed — what caused it?", "example": "Before a launch, list likely failure modes and mitigation plans.", "question": "What are we likely to regret not preparing for?"}, {"name": "Sunk Cost", "tag": "Decisions", "one": "Past cost should not control future choices when the cost cannot be recovered.", "think": "If I started today, would I still choose this?", "example": "A technology choice, course or job can be abandoned even after months invested if a better path now exists.", "question": "Would I choose this again from zero?"}, {"name": "Base Rates", "tag": "Probability", "one": "Before focusing on the story, look at what normally happens in similar cases.", "think": "What usually happens to people/systems like this?", "example": "Before assuming a startup will become huge, ask how often startups with similar signals actually do.", "question": "What does the reference class say?"}];
+const DAYS = [{"day": 1, "week": 1, "phase": "Foundation", "task": "Set a consistent sleep/wake window; log it."}, {"day": 2, "week": 1, "phase": "Foundation", "task": "Do one 30–45 min phone-free deep-work block."}, {"day": 3, "week": 1, "phase": "Foundation", "task": "Remove one major distraction from your environment."}, {"day": 4, "week": 1, "phase": "Foundation", "task": "Estimate 3 tasks before doing them; compare actual time later."}, {"day": 5, "week": 1, "phase": "Foundation", "task": "Plan tomorrow with 3 must-win outcomes."}, {"day": 6, "week": 1, "phase": "Foundation", "task": "Do a 30–45 min walk or workout and notice your energy afterward."}, {"day": 7, "week": 1, "phase": "Foundation", "task": "Weekly review: what improved, what distracted you, what changes next week?"}, {"day": 8, "week": 2, "phase": "Attention", "task": "Do two focused blocks; keep a distraction tally."}, {"day": 9, "week": 2, "phase": "Attention", "task": "Practice returning to the task every time attention wanders."}, {"day": 10, "week": 2, "phase": "Attention", "task": "Turn off non-essential notifications for the day."}, {"day": 11, "week": 2, "phase": "Attention", "task": "Work for 60 minutes on one difficult task without switching."}, {"day": 12, "week": 2, "phase": "Attention", "task": "Notice your strongest distraction trigger and redesign around it."}, {"day": 13, "week": 2, "phase": "Attention", "task": "Read for 30 minutes with phone out of reach; recall the main ideas afterward."}, {"day": 14, "week": 2, "phase": "Attention", "task": "Review your focus data; choose one friction-removal experiment."}, {"day": 15, "week": 3, "phase": "Learning", "task": "Use active recall on one topic you are learning."}, {"day": 16, "week": 3, "phase": "Learning", "task": "Solve one problem before looking at the solution."}, {"day": 17, "week": 3, "phase": "Learning", "task": "Explain a concept aloud in plain language."}, {"day": 18, "week": 3, "phase": "Learning", "task": "Create 5 flashcards from today's learning."}, {"day": 19, "week": 3, "phase": "Learning", "task": "Revisit something from last week without notes."}, {"day": 20, "week": 3, "phase": "Learning", "task": "Do one deliberate-practice session at the edge of your ability."}, {"day": 21, "week": 3, "phase": "Learning", "task": "Review: what study method produced the best retention?"}, {"day": 22, "week": 4, "phase": "Thinking", "task": "Use first principles on one work problem."}, {"day": 23, "week": 4, "phase": "Thinking", "task": "Use inversion: list five ways your current goal could fail."}, {"day": 24, "week": 4, "phase": "Thinking", "task": "Use second-order thinking: write “and then what?” three times."}, {"day": 25, "week": 4, "phase": "Thinking", "task": "Write a decision as probabilities rather than certainty."}, {"day": 26, "week": 4, "phase": "Thinking", "task": "Separate observations from interpretations in one disagreement."}, {"day": 27, "week": 4, "phase": "Thinking", "task": "Find one belief you changed because of evidence."}, {"day": 28, "week": 4, "phase": "Thinking", "task": "Review your decision quality, not just the outcome."}, {"day": 29, "week": 5, "phase": "Courage", "task": "Do one small thing you are avoiding because it feels uncomfortable."}, {"day": 30, "week": 5, "phase": "Courage", "task": "Ask a question you would normally stay quiet about."}, {"day": 31, "week": 5, "phase": "Courage", "task": "State your real opinion once, respectfully."}, {"day": 32, "week": 5, "phase": "Courage", "task": "Ask for specific feedback from someone competent."}, {"day": 33, "week": 5, "phase": "Courage", "task": "Have one conversation you have been postponing."}, {"day": 34, "week": 5, "phase": "Courage", "task": "Do something where a minor failure is visible."}, {"day": 35, "week": 5, "phase": "Courage", "task": "Record: what you feared vs. what actually happened."}, {"day": 36, "week": 6, "phase": "Communication", "task": "Explain one technical idea in 60 seconds."}, {"day": 37, "week": 6, "phase": "Communication", "task": "Listen in a conversation without preparing your reply."}, {"day": 38, "week": 6, "phase": "Communication", "task": "Write a concise message with context, decision and next step."}, {"day": 39, "week": 6, "phase": "Communication", "task": "Tell a story with setup → tension → resolution."}, {"day": 40, "week": 6, "phase": "Communication", "task": "Practice disagreeing without attacking the person."}, {"day": 41, "week": 6, "phase": "Communication", "task": "Record yourself explaining a complex idea and review it."}, {"day": 42, "week": 6, "phase": "Communication", "task": "Write one lesson about how you communicate under pressure."}, {"day": 43, "week": 7, "phase": "Execution", "task": "Identify the bottleneck in one project."}, {"day": 44, "week": 7, "phase": "Execution", "task": "Find one high-leverage action that makes several things easier."}, {"day": 45, "week": 7, "phase": "Execution", "task": "Run a pre-mortem on an important task."}, {"day": 46, "week": 7, "phase": "Execution", "task": "Cut one low-value commitment."}, {"day": 47, "week": 7, "phase": "Execution", "task": "Finish one small task completely before opening another."}, {"day": 48, "week": 7, "phase": "Execution", "task": "Create one repeatable checklist for a recurring task."}, {"day": 49, "week": 7, "phase": "Execution", "task": "Review where effort produced the most output."}, {"day": 50, "week": 8, "phase": "Career", "task": "Write down your 3 strongest measurable work outcomes."}, {"day": 51, "week": 8, "phase": "Career", "task": "Write one example of ownership you have demonstrated."}, {"day": 52, "week": 8, "phase": "Career", "task": "Identify one capability that is a career bottleneck."}, {"day": 53, "week": 8, "phase": "Career", "task": "Study one system/architecture topic above your current level."}, {"day": 54, "week": 8, "phase": "Career", "task": "Explain your work in business impact, not just implementation detail."}, {"day": 55, "week": 8, "phase": "Career", "task": "Ask: what would make me obviously more valuable in 12 months?"}, {"day": 56, "week": 8, "phase": "Career", "task": "Update your career scorecard with evidence."}, {"day": 57, "week": 9, "phase": "Character", "task": "Keep one promise to yourself exactly as stated."}, {"day": 58, "week": 9, "phase": "Character", "task": "Tell the truth in one place where a convenient half-truth was tempting."}, {"day": 59, "week": 9, "phase": "Character", "task": "Notice blame; replace it with responsibility for your part."}, {"day": 60, "week": 9, "phase": "Character", "task": "Do a useful thing for someone without needing credit."}, {"day": 61, "week": 9, "phase": "Character", "task": "Set one healthy boundary clearly and respectfully."}, {"day": 62, "week": 9, "phase": "Character", "task": "Admit one mistake quickly."}, {"day": 63, "week": 9, "phase": "Character", "task": "Review which behaviors you want your future self to be known for."}, {"day": 64, "week": 10, "phase": "Relationships", "task": "Ask someone a thoughtful question and listen fully."}, {"day": 65, "week": 10, "phase": "Relationships", "task": "Give specific appreciation to someone who helped you."}, {"day": 66, "week": 10, "phase": "Relationships", "task": "Notice when you are mind-reading; verify instead."}, {"day": 67, "week": 10, "phase": "Relationships", "task": "Have one screen-free meal or conversation."}, {"day": 68, "week": 10, "phase": "Relationships", "task": "Resolve one tiny source of recurring friction."}, {"day": 69, "week": 10, "phase": "Relationships", "task": "Practice saying “I don't know” without defensiveness."}, {"day": 70, "week": 10, "phase": "Relationships", "task": "Review which relationships leave you stronger, calmer or wiser."}, {"day": 71, "week": 11, "phase": "Resilience", "task": "Notice a bad thought without turning it into an identity statement."}, {"day": 72, "week": 11, "phase": "Resilience", "task": "Write one setback as a data point, not a verdict."}, {"day": 73, "week": 11, "phase": "Resilience", "task": "Do a hard task while motivation is low."}, {"day": 74, "week": 11, "phase": "Resilience", "task": "Take a real recovery block without guilt."}, {"day": 75, "week": 11, "phase": "Resilience", "task": "Use inversion on one recurring personal problem."}, {"day": 76, "week": 11, "phase": "Resilience", "task": "Do one physically challenging but sensible workout."}, {"day": 77, "week": 11, "phase": "Resilience", "task": "Review what stress made you stronger and what stress simply depleted you."}, {"day": 78, "week": 12, "phase": "Integration", "task": "Choose your 5 most important mental models and use them today."}, {"day": 79, "week": 12, "phase": "Integration", "task": "Build your personal “red flags” list: situations where judgment drops."}, {"day": 80, "week": 12, "phase": "Integration", "task": "Create a one-page weekly operating system."}, {"day": 81, "week": 12, "phase": "Integration", "task": "Pick one habit to automate with calendar/reminders."}, {"day": 82, "week": 12, "phase": "Integration", "task": "Write your top 10 principles for work and life."}, {"day": 83, "week": 12, "phase": "Integration", "task": "Plan the next 90 days around one major outcome."}, {"day": 84, "week": 12, "phase": "Integration", "task": "Final review: what changed, what remains, and what will compound next?"}, {"day": 85, "week": 13, "phase": "Integration & Continuation", "task": "Choose the five mental models that changed your thinking most; write when you will use each."}, {"day": 86, "week": 13, "phase": "Integration & Continuation", "task": "Write your personal red-flags list: situations where you become distracted, reactive or overconfident."}, {"day": 87, "week": 13, "phase": "Integration & Continuation", "task": "Build a one-page weekly operating system: sleep, deep work, learning, movement, courage and review."}, {"day": 88, "week": 13, "phase": "Integration & Continuation", "task": "Automate one recurring behavior with a calendar reminder, checklist or default environment."}, {"day": 89, "week": 13, "phase": "Integration & Continuation", "task": "Write your top ten principles for work, relationships, money and character."}, {"day": 90, "week": 13, "phase": "Integration & Continuation", "task": "Choose one major 90-day outcome and define its leading indicators."}, {"day": 91, "week": 13, "phase": "Integration & Continuation", "task": "Final review: what changed, what remains, and what will you deliberately compound for the next year?"}];
+const POSITIVE = ["You do not need a new personality. You need better repetitions.", "Progress can be boring and still be transformative.", "A bad day is data, not a verdict.", "You are allowed to become unusually good at things you are currently average at.", "Courage is a behavior before it becomes a feeling.", "Your job is not to feel confident. Your job is to keep collecting evidence.", "Think clearly. Act honestly. Repeat.", "Small promises kept to yourself become self-trust.", "You don't need to fix your whole life today. Train one system well.", "The point is not perfection. The point is compounding.", "You can outgrow an old self-description.", "One honest observation is more useful than ten harsh judgments."];
+const STORE_KEY = "think-better-91-v1";
+const defaults = {
+  completedDays: {},
+  reps: {},
+  favorites: {},
+  reviewedModels: {},
+  theme: "light",
+  dailyModelIndex: 0,
+  lastOpened: ""
+};
+let state = Object.assign({}, defaults, JSON.parse(localStorage.getItem(STORE_KEY) || "{}"));
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); renderAll(); }
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function dayOfYear(){
+  const d = new Date(), start = new Date(d.getFullYear(),0,0);
+  return Math.floor((d-start)/86400000);
+}
+function getPlanDay(){ return DAYS[(dayOfYear()-1)%DAYS.length]; }
+function toast(msg){
+  const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show");
+  clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),1800);
+}
+function setTheme(){
+  document.documentElement.dataset.theme=state.theme==="dark"?"dark":"";
+  document.getElementById("themeBtn").textContent=state.theme==="dark"?"☀":"☾";
+}
+function pickDailyModel(){
+  let idx = state.dailyModelIndex || 0;
+  const target = getPlanDay().day;
+  return MODELS[(idx + target) % MODELS.length];
+}
+function setDailyModel(idx){
+  state.dailyModelIndex = (typeof idx==="number" ? idx : Math.floor(Math.random()*MODELS.length));
+  renderDailyModel(); save();
+}
+function renderDailyModel(){
+  const m=pickDailyModel(), card=document.getElementById("dailyModel");
+  card.classList.remove("flipped");
+  for(const id of ["dailyTag","backTag"]) document.getElementById(id).textContent=m.tag;
+  document.getElementById("dailyName").textContent=m.name;
+  document.getElementById("dailyOne").textContent=m.one;
+  document.getElementById("backThink").textContent=m.think;
+  document.getElementById("backExample").textContent=m.example;
+  document.getElementById("backQuestion").textContent=m.question;
+  const fav=!!state.favorites[m.name];
+  document.getElementById("favDailyBtn").textContent=fav?"★ Favorited":"☆ Favorite";
+}
+function renderToday(){
+  const d=getPlanDay(), key=todayKey();
+  const repBase=[
+    {id:"focus",label:"Deep work",text:"Do one 45–60 minute phone-free block."},
+    {id:"learning",label:"Learning",text:"Learn → recall → apply → feedback for one real topic."},
+    {id:"courage",label:"Courage",text:"Do one useful thing you are avoiding because it feels uncomfortable."},
+    {id:"body",label:"Body",text:"Move: walk, strength or cardio. Keep it sensible and repeatable."},
+    {id:"review",label:"Review",text:"Spend 5 minutes asking: what worked, what failed, what changes tomorrow?"}
+  ];
+  const reps=repBase.map(r=>({...r,done:!!(state.reps[key]||{})[r.id]}));
+  const c=document.getElementById("todayReps"); c.innerHTML="";
+  reps.forEach(r=>{
+    const el=document.createElement("div"); el.className="day-card "+(r.done?"done":"");
+    el.innerHTML=`<label class="checkline"><input type="checkbox" ${r.done?"checked":""}><div><div class="daynum">${r.label}</div><div style="margin-top:3px;font-weight:800">${r.text}</div></div></label>`;
+    el.querySelector("input").addEventListener("change",e=>{
+      state.reps[key]=state.reps[key]||{}; state.reps[key][r.id]=e.target.checked; save();
+      toast(e.target.checked?"Rep logged":"Rep unchecked");
+    });
+    c.appendChild(el);
+  });
+  document.getElementById("todayCount").textContent=`${reps.filter(x=>x.done).length} / ${reps.length}`;
+  const msg=POSITIVE[(dayOfYear()-1)%POSITIVE.length];
+  document.getElementById("positiveLine").textContent=msg;
+  const reviewQuote=document.getElementById("reviewQuote"); if(reviewQuote) reviewQuote.textContent=msg;
+  const completed=Object.values(state.completedDays||{}).filter(Boolean).length;
+  document.getElementById("progressPct").textContent=Math.round(completed/91*100)+"%";
+  document.getElementById("streakValue").textContent=calcStreak();
+  document.getElementById("todayReps").dataset.planDay=d.day;
+}
+function calcStreak(){
+  let streak=0, d=new Date();
+  while(true){
+    const key=d.toISOString().slice(0,10);
+    const reps=state.reps[key]||{};
+    const done=Object.values(reps).filter(Boolean).length;
+    if(done>=4){ streak++; d.setDate(d.getDate()-1); } else break;
+  }
+  return streak;
+}
+function renderFilters(){
+  const tags=[...new Set(MODELS.map(m=>m.tag))].sort();
+  const box=document.getElementById("filters"); box.innerHTML="";
+  ["All",...tags].forEach(t=>{
+    const b=document.createElement("button"); b.className="pill"; b.textContent=t;
+    b.onclick=()=>{ state.modelFilter=t; renderModels(); };
+    box.appendChild(b);
+  });
+}
+function renderModels(){
+  const q=(document.getElementById("modelSearch").value||"").toLowerCase().trim();
+  const filter=state.modelFilter||"All";
+  let arr=MODELS.filter(m=>(filter==="All"||m.tag===filter) && [m.name,m.tag,m.one,m.think,m.example,m.question].join(" ").toLowerCase().includes(q));
+  document.getElementById("modelCount").textContent=`${arr.length} models`;
+  const list=document.getElementById("modelList"); list.innerHTML="";
+  arr.forEach(m=>{
+    const el=document.createElement("div"); el.className="mini-card";
+    const star=state.favorites[m.name]?"★":"☆";
+    el.innerHTML=`<span class="fav ${state.favorites[m.name]?"on":""}">${star}</span><strong>${m.name}</strong><div class="row" style="margin-top:7px"><span class="pill">${m.tag}</span></div><p>${m.one}</p>`;
+    el.onclick=()=>showModelModal(m);
+    list.appendChild(el);
+  });
+}
+function showModelModal(m){
+  const card=document.createElement("div");
+  card.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.48);display:flex;align-items:flex-end;justify-content:center;z-index:80;padding:10px";
+  card.innerHTML=`<div class="card" style="width:min(760px,100%);max-height:88vh;overflow:auto">
+    <div class="section-head"><span class="pill">${m.tag}</span><button class="btn small secondary" id="closeM">Close</button></div>
+    <h2>${m.name}</h2>
+    <p class="sub">${m.one}</p>
+    <div class="divider"></div>
+    <div class="small-label">THINK IN</div><p class="sub">${m.think}</p>
+    <div class="divider"></div>
+    <div class="small-label">REAL USE</div><p class="sub">${m.example}</p>
+    <div class="divider"></div>
+    <div class="small-label">ASK YOURSELF</div><p class="sub">${m.question}</p>
+    <button class="btn accent" style="margin-top:14px" id="favM">${state.favorites[m.name]?"★ Remove favorite":"☆ Add favorite"}</button>
+  </div>`;
+  document.body.appendChild(card);
+  card.querySelector("#closeM").onclick=()=>card.remove();
+  card.addEventListener("click",e=>{if(e.target===card)card.remove()});
+  card.querySelector("#favM").onclick=()=>{state.favorites[m.name]=!state.favorites[m.name];save();card.remove();renderModels();toast(state.favorites[m.name]?"Saved":"Removed")};
+}
+function renderPlan(){
+  const grouped={}; DAYS.forEach(d=>(grouped[d.week]??=[]).push(d));
+  const box=document.getElementById("planWeeks"); box.innerHTML="";
+  Object.entries(grouped).forEach(([week,items])=>{
+    const done=items.filter(d=>state.completedDays[d.day]).length;
+    const det=document.createElement("details");
+    det.open=(+week===Math.ceil(getPlanDay().day/7));
+    det.innerHTML=`<summary>Week ${week} · ${items[0].phase} <span style="float:right;color:var(--muted)">${done}/7</span></summary><div class="inside"></div>`;
+    const inside=det.querySelector(".inside");
+    items.forEach(d=>{
+      const el=document.createElement("div"); el.className="day-card "+(state.completedDays[d.day]?"done":"");
+      el.innerHTML=`<label class="checkline"><input type="checkbox" ${state.completedDays[d.day]?"checked":""}><div><div class="daynum">DAY ${d.day}</div><div style="margin-top:3px;font-weight:800">${d.task}</div></div></label>`;
+      el.querySelector("input").addEventListener("change",e=>{state.completedDays[d.day]=e.target.checked;save();toast(e.target.checked?`Day ${d.day} complete`:`Day ${d.day} reopened`)});
+      inside.appendChild(el);
+      if(d.day!==items[items.length-1].day) inside.appendChild(document.createElement("div")).style.height="8px";
+    });
+    box.appendChild(det);
+  });
+  const done=Object.values(state.completedDays).filter(Boolean).length;
+  document.getElementById("planProgressText").textContent=`${done} / 91`;
+  document.getElementById("planProgressBar").style.width=(done/91*100)+"%";
+}
+function saveField(id,key){
+  state[key]=document.getElementById(id).value; save(); toast("Saved");
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById(b.dataset.view).classList.add("active");
+});
+document.getElementById("themeBtn").onclick=()=>{state.theme=state.theme==="dark"?"light":"dark";save();setTheme()};
+document.getElementById("shuffleBtn").onclick=()=>setDailyModel(Math.floor(Math.random()*MODELS.length));
+document.getElementById("dailyModel").onclick=()=>document.getElementById("dailyModel").classList.toggle("flipped");
+document.getElementById("modelDoneBtn").onclick=()=>{state.reviewedModels[pickDailyModel().name]=todayKey();save();toast("Model reviewed")};
+document.getElementById("favDailyBtn").onclick=(e)=>{const m=pickDailyModel();state.favorites[m.name]=!state.favorites[m.name];save();e.stopPropagation();};
+document.getElementById("modelSearch").addEventListener("input",renderModels);
+document.getElementById("saveReview").onclick=()=>{state.dailyReview={date:todayKey(),wins:document.getElementById("wins").value,failure:document.getElementById("failure").value,tomorrow:document.getElementById("tomorrow").value};save();toast("Review saved")};
+document.getElementById("saveDecision").onclick=()=>{state.decisionNotes=state.decisionNotes||[];state.decisionNotes.push({date:todayKey(),decision:document.getElementById("decision").value,probability:document.getElementById("probability").value,evidence:document.getElementById("evidence").value});save();toast("Decision note saved")};
+document.getElementById("savePrinciples").onclick=()=>saveField("principles","principles");
+function loadFields(){
+  if(state.dailyReview){["wins","failure","tomorrow"].forEach(k=>document.getElementById(k).value=state.dailyReview[k]||"")}
+  document.getElementById("principles").value=state.principles||"";
+}
+function renderAll(){setTheme();renderDailyModel();renderToday();renderModels();renderPlan();loadFields();}
+renderFilters(); renderAll();
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+</script>
+</body>
+</html>
