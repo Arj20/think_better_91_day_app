@@ -146,7 +146,19 @@ details .inside{padding:0 0 15px}
       <div class="quote" id="positiveLine"></div><div class="section"><div class="row"><span class="pill" id="missionDay">DAY 1</span><span class="kicker" id="missionModel">First Principles</span></div><h2 id="missionTitle" style="margin-top:10px">Today’s mission</h2><p class="sub" id="missionWhy"></p><div class="divider"></div><div class="small-label">REAL-LIFE EXAMPLE</div><p class="sub" id="missionExample"></p><div class="divider"></div><div class="small-label">DO THIS TODAY</div><div class="grid" style="margin-top:10px"><div class="day-card"><strong>Step 1</strong><p class="sub" id="missionStep1"></p></div><div class="day-card"><strong>Step 2</strong><p class="sub" id="missionStep2"></p></div><div class="day-card"><strong>Step 3</strong><p class="sub" id="missionStep3"></p></div></div><div class="quote"><strong>Small win:</strong> <span id="missionWin"></span></div><button class="btn accent" id="missionCompleteBtn" style="margin-top:12px">Mark mission complete</button></div>
     </div>
 
-    <div class="section grid two">
+    <div class="section">
+  <div class="card" style="padding:20px">
+    <div class="eyebrow">YOUR SYSTEM FOR TODAY</div>
+    <h2 style="margin-top:6px">Do these 5 things in this order.</h2>
+    <p class="sub">You do not need to transform your life today. Follow the sequence, collect evidence, and stop when the day is done.</p>
+    <div class="grid" id="todaySystemSteps" style="margin-top:14px"></div>
+    <div class="quote" style="margin-top:14px">
+      <strong>Rule for today:</strong> one real action beats ten hours of thinking about becoming a better person.
+    </div>
+  </div>
+</div>
+
+<div class="section grid two">
       <div class="stat"><div class="label">91-day progress</div><div class="value" id="progressPct">0%</div></div>
       <div class="stat"><div class="label">Current streak</div><div class="value" id="streakValue">0</div></div>
     </div>
@@ -305,20 +317,66 @@ function getTodayTask(){
 }
 function renderToday(){
   const d=getPlanDay(), key=todayKey(), task=getTodayTask();
-  const repBase=[
+  const system=[
+    {
+      id:"orient",time:"5 MIN · START",
+      title:"Load the model into your head",
+      text:"Read today’s model once. Say the memory hook out loud or write it from memory.",
+      example:"Today’s model: "+task.model+". Start with the question: "+(task.title.includes("—")?task.title.split("—")[1].trim():task.title)+"."
+    },
+    {
+      id:"deep",time:"45–60 MIN · WORK",
+      title:"Apply it to a real problem",
+      text:"Pick one real work/life problem. Use the model before opening more tabs, asking for advice or changing direction.",
+      example:task.example
+    },
+    {
+      id:"catch",time:"5 MIN · MIDDAY",
+      title:"Catch the model in the wild",
+      text:"When a situation triggers you, pause and use the model’s question before reacting.",
+      example:task.steps[1]
+    },
+    {
+      id:"courage",time:"10 MIN · ONE UNCOMFORTABLE ACTION",
+      title:"Turn thinking into behavior",
+      text:"Do one useful thing you have been avoiding. Keep it small enough that you will actually do it.",
+      example:task.steps[2]
+    },
+    {
+      id:"review",time:"10 MIN · EVENING",
+      title:"Collect evidence, don’t judge yourself",
+      text:"Write: What happened? What did I learn? What will I repeat or change tomorrow?",
+      example:task.win
+    }
+  ];
+  const sc=document.getElementById("todaySystemSteps"); sc.innerHTML="";
+  system.forEach(step=>{
+    const done=!!((state.system||{})[key]||{})[step.id];
+    const el=document.createElement("div");
+    el.className="day-card "+(done?"done":"");
+    el.innerHTML='<label class="checkline"><input type="checkbox" '+(done?"checked":"")+'><div style="width:100%"><div class="row"><span class="daynum">'+step.time+'</span></div><div style="margin-top:3px;font-size:17px;font-weight:850">'+step.title+'</div><p class="sub">'+step.text+'</p><div class="quote" style="margin-top:10px"><span class="small-label">EXAMPLE</span><br><span style="display:block;margin-top:5px;font-weight:500">'+step.example+'</span></div></div></label>';
+    el.querySelector("input").addEventListener("change",ev=>{
+      state.system=state.system||{}; state.system[key]=state.system[key]||{}; state.system[key][step.id]=ev.target.checked;
+      save(); toast(ev.target.checked?"System step done":"Step reopened");
+    });
+    sc.appendChild(el);
+  });
+
+  const reps=[
     {id:"focus",label:"1. Focus",text:"Do one 45–60 minute phone-free block on the task below."},
     {id:"task",label:"2. Practice",text:task.steps[0]},
     {id:"evidence",label:"3. Evidence",text:"Write one sentence showing what happened — not what you hoped would happen."}
   ];
-  const reps=repBase.map(r=>({...r,done:!!(state.reps[key]||{})[r.id]}));
+  const repsWithState=reps.map(r=>({...r,done:!!(state.reps[key]||{})[r.id]}));
   const c=document.getElementById("todayReps"); c.innerHTML="";
-  reps.forEach(r=>{
+  repsWithState.forEach(r=>{
     const el=document.createElement("div"); el.className="day-card "+(r.done?"done":"");
     el.innerHTML='<label class="checkline"><input type="checkbox" '+(r.done?"checked":"")+'><div><div class="daynum">'+r.label+'</div><div style="margin-top:3px;font-weight:800">'+r.text+'</div></div></label>';
     el.querySelector("input").addEventListener("change",ev=>{ state.reps[key]=state.reps[key]||{}; state.reps[key][r.id]=ev.target.checked; save(); toast(ev.target.checked?"Rep logged":"Rep unchecked"); });
     c.appendChild(el);
   });
-  document.getElementById("todayCount").textContent=(reps.filter(x=>x.done).length)+" / "+reps.length;
+  document.getElementById("todayCount").textContent=(repsWithState.filter(x=>x.done).length)+" / "+repsWithState.length;
+
   const msg=POSITIVE[(dayOfYear()-1)%POSITIVE.length];
   document.getElementById("positiveLine").textContent=msg;
   const reviewQuote=document.getElementById("reviewQuote"); if(reviewQuote) reviewQuote.textContent=msg;
