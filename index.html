@@ -373,24 +373,32 @@ function renderModels(){
   });
 }
 function showModelModal(m){
+  const related=DAILY_TASKS.find(t=>t.model===m.name);
   const card=document.createElement("div");
-  card.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.48);display:flex;align-items:flex-end;justify-content:center;z-index:80;padding:10px";
-  card.innerHTML=`<div class="card" style="width:min(760px,100%);max-height:88vh;overflow:auto">
-    <div class="section-head"><span class="pill">${m.tag}</span><button class="btn small secondary" id="closeM">Close</button></div>
-    <h2>${m.name}</h2>
-    <p class="sub">${m.one}</p>
-    <div class="divider"></div>
-    <div class="small-label">THINK IN</div><p class="sub">${m.think}</p>
-    <div class="divider"></div>
-    <div class="small-label">REAL USE</div><p class="sub">${m.example}</p>
-    <div class="divider"></div>
-    <div class="small-label">ASK YOURSELF</div><p class="sub">${m.question}</p>
-    <button class="btn accent" style="margin-top:14px" id="favM">${state.favorites[m.name]?"★ Remove favorite":"☆ Add favorite"}</button>
-  </div>`;
+  card.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.56);display:flex;align-items:flex-end;justify-content:center;z-index:80;padding:10px";
+  card.innerHTML='<div class="card model-modal" style="width:min(760px,100%);max-height:90vh;overflow:auto;padding:22px 20px 24px">'+
+    '<div class="section-head"><div class="row"><span class="pill">'+m.tag+'</span><span class="kicker">Mental model</span></div><button class="btn small secondary" id="closeM">Close</button></div>'+
+    '<div class="eyebrow" style="margin-top:6px">Remember this</div>'+
+    '<h2 style="font-size:30px;margin-top:5px">'+m.name+'</h2>'+
+    '<p class="sub" style="font-size:17px">'+m.one+'</p>'+
+    '<div class="quote"><strong>Think:</strong> '+m.think+'</div>'+
+    '<div class="divider"></div>'+
+    '<div class="small-label">SEE IT IN REAL LIFE</div>'+
+    '<p class="sub">'+m.example+'</p>'+
+    (related ? '<div class="divider"></div><div class="small-label">USE IT TODAY</div><div class="day-card" style="margin-top:9px"><strong>'+related.title+'</strong><p class="sub" style="margin-top:6px">'+related.steps[0]+'</p><p class="sub" style="margin-top:6px">'+related.steps[1]+'</p><p class="sub" style="margin-top:6px">'+related.steps[2]+'</p><div class="quote"><strong>Small win:</strong> '+related.win+'</div></div>' : '')+
+    '<div class="divider"></div>'+
+    '<div class="small-label">ASK YOURSELF</div>'+
+    '<p class="sub" style="font-size:17px">'+m.question+'</p>'+
+    '<button class="btn accent" style="margin-top:14px" id="favM">'+(state.favorites[m.name]?"★ Remove favorite":"☆ Add favorite")+'</button>'+
+  '</div>';
   document.body.appendChild(card);
   card.querySelector("#closeM").onclick=()=>card.remove();
   card.addEventListener("click",e=>{if(e.target===card)card.remove()});
-  card.querySelector("#favM").onclick=()=>{state.favorites[m.name]=!state.favorites[m.name];save();card.remove();renderModels();toast(state.favorites[m.name]?"Saved":"Removed")};
+  card.querySelector("#favM").onclick=()=>{
+    state.favorites[m.name]=!state.favorites[m.name];
+    save(); card.remove(); renderModels();
+    toast(state.favorites[m.name]?"Saved":"Removed");
+  };
 }
 function renderPlan(){
   const grouped={}; DAYS.forEach(d=>(grouped[d.week]??=[]).push(d));
